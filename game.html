@@ -16,10 +16,14 @@
   <body>
   <div id="playground" style="width: 800px; height: 600px; background: black; border: 1px dotted green">
     <!--<div id="board" style="position: absolute; overflow: hidden; top: 20px; left: 20px; width: 360px; height: 480px; background: red;">-->
-    <div id="welcomeScreen" style="background: url(./startscreen.jpg); width: 600px; height: 600px; position: absolute; z-index: 100;">
-      <div style="position: absolute; top: 320px; width: 600px; color: lightgreen;">
-        <div id="loadingBar" style="position: relative; left: 100px; height: 15px; width: 0px; background: red;"></div><br />
+    <div id="welcomeScreen" style="background: url(./startscreen.jpg); width: 800px; height: 600px; position: absolute; z-index: 100;">
+      <div style="position: absolute; top: 320px; width: 800px; color: lightgreen;">
         <center><a style="cursor: pointer;font-size: 80px" id="startbutton">Click here to start!</a></center>
+      </div>
+    </div>
+    <div id="game-over-screen" style="background: url(./startscreen.jpg); width: 800px; height: 600px; position: absolute; z-index: 100; display: none">
+      <div style="position: absolute; top: 320px; width: 800px; color: lightgreen;">
+        <center><a style="cursor: pointer;font-size: 80px" onclick='window.location.reload()'>Game over! Restart!</a></center>
       </div>
     </div>
   </div>

@@ -19,7 +19,7 @@ class ShipShot
 
   updatePos: ->
     if @posy > 0
-      @posy -= 10
+      @posy -= 20
       @elem().y(@posy)
       @
     else
@@ -131,6 +131,10 @@ shipShotCallback = ->
         am.destroy(alien)
         shipShot = shipShot.destroy()
 
+gameOver = ->
+  $.playground().pauseGame()
+  $('#game-over-screen').fadeIn()
+
 aliensDelta = 5
 alienSteps = 0
 alienStepsDown = 0
@@ -144,10 +148,13 @@ alienCallback = ->
     aliensDelta = -aliensDelta
     for alien in aliens
       alien.moveVert(10)
+      if alien.posy >= 200
+        gameOver()
 
     alienStepsDown += 1
     if alienStepsDown > 3
       alienStepsDown = 0
+      aliensDelta += 1
       am.generujRzadekAlienow(0)
 
   null
