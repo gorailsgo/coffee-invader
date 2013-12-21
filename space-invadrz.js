@@ -6,6 +6,10 @@ WIDTH = 800;
 SHIP_POSY = 540;
 
 ShipShot = (function() {
+  ShipShot.prototype.width = 2;
+
+  ShipShot.prototype.height = 20;
+
   ShipShot.prototype.elem = function() {
     return $('#ship-shot');
   };
@@ -16,8 +20,8 @@ ShipShot = (function() {
     $.playground().addSprite('ship-shot', {
       posx: this.posx,
       posy: this.posy,
-      width: 2,
-      height: 20,
+      width: this.width,
+      height: this.height,
       animation: new $.gQ.Animation({
         imageURL: "images/ship-shot.jpg"
       })
@@ -37,6 +41,15 @@ ShipShot = (function() {
   ShipShot.prototype.destroy = function() {
     this.elem().remove();
     return null;
+  };
+
+  ShipShot.prototype.rect = function() {
+    return {
+      top: this.posy,
+      left: this.posx,
+      bottom: this.posy + this.height,
+      right: this.posx + this.width
+    };
   };
 
   return ShipShot;
@@ -99,6 +112,10 @@ Ship = (function() {
 alienId = 0;
 
 Alien = (function() {
+  Alien.prototype.width = 40;
+
+  Alien.prototype.height = 30;
+
   function Alien(posx, posy, type) {
     this.posx = posx;
     this.posy = posy;
@@ -107,8 +124,8 @@ Alien = (function() {
     $.playground().addSprite("alien-" + this.id, {
       posx: this.posx,
       posy: this.posy,
-      width: 40,
-      height: 30,
+      width: this.width,
+      height: this.height,
       animation: new $.gQ.Animation({
         imageURL: "images/invader" + this.type + ".jpg"
       })
@@ -133,6 +150,14 @@ Alien = (function() {
     return this.elem().x(this.posx).y(this.posy);
   };
 
+  Alien.prototype.collidesWith = function(rect) {
+    return this.posy <= rect.bottom && this.posy + this.height >= rect.top && this.posx <= rect.right && this.posx + this.width <= rect.left;
+  };
+
+  Alien.prototype.destroy = function() {
+    return this.elem().remove();
+  };
+
   return Alien;
 
 })();
@@ -152,6 +177,10 @@ AlienManager = (function() {
       _results.push(aliens.push(new Alien(20 + x * 60, 20 + num * 40, this.type % 3)));
     }
     return _results;
+  };
+
+  AlienManager.prototype.destroy = function(a) {
+    return a.destroy();
   };
 
   return AlienManager;
@@ -179,8 +208,20 @@ shipCallback = function() {
 };
 
 shipShotCallback = function() {
+  var alien, _i, _len, _results;
   if (shipShot) {
-    return shipShot = shipShot.updatePos();
+    shipShot = shipShot.updatePos();
+    _results = [];
+    for (_i = 0, _len = aliens.length; _i < _len; _i++) {
+      alien = aliens[_i];
+      if (alien.collidesWith(shipShot.rect())) {
+        am.destroy(alien);
+        _results.push(shipShot = shipShot.destroy());
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   }
 };
 

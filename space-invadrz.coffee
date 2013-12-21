@@ -2,6 +2,9 @@ WIDTH = 800
 SHIP_POSY = 540
 
 class ShipShot
+  width: 2
+  height: 20
+
   elem: ->
     $('#ship-shot')
 
@@ -10,8 +13,8 @@ class ShipShot
     $.playground().addSprite('ship-shot',
       posx: @posx,
       posy: @posy,
-      width: 2,
-      height: 20,
+      width: @width,
+      height: @height,
       animation: new $.gQ.Animation(imageURL: "images/ship-shot.jpg"))
 
   updatePos: ->
@@ -25,6 +28,9 @@ class ShipShot
   destroy: ->
     @elem().remove()
     null
+
+  rect: ->
+    {top: @posy, left: @posx, bottom: @posy + @height, right: @posx + @width}
 
 class Ship
   constructor: (args) ->
@@ -57,13 +63,16 @@ class Ship
 
 alienId = 0
 class Alien
+  width: 40
+  height: 30
+
   constructor: (@posx, @posy, @type) ->
     @id = (alienId += 1)
     $.playground().addSprite("alien-#{@id}",
       posx: @posx,
       posy: @posy,
-      width: 40,
-      height: 30,
+      width: @width,
+      height: @height,
       animation: new $.gQ.Animation(imageURL: "images/invader#{@type}.jpg"))
 
   elem: ->
@@ -80,6 +89,13 @@ class Alien
   updatePos: ->
     @elem().x(@posx).y(@posy)
 
+  collidesWith: (rect) ->
+    @posy <= rect.bottom && @posy + @height >= rect.top &&
+    @posx <= rect.right  && @posx + @width  <= rect.left
+
+  destroy: ->
+    @elem().remove()
+
 aliens = []
 class AlienManager
   type: 0
@@ -88,6 +104,9 @@ class AlienManager
     @type += 1
     for x in [0..9]
       aliens.push new Alien(20 + x * 60, 20 + num * 40, @type % 3)
+
+  destroy: (a) ->
+    a.destroy()
 
 am = new AlienManager
 
@@ -106,6 +125,10 @@ shipCallback = ->
 shipShotCallback = ->
   if shipShot
     shipShot = shipShot.updatePos()
+    for alien in aliens
+      if alien.collidesWith(shipShot.rect())
+        am.destroy(alien)
+        shipShot = shipShot.destroy()
 
 aliensDelta = 5
 alienSteps = 0
