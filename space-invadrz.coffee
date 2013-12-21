@@ -67,7 +67,14 @@ class Alien
       animation: new $.gQ.Animation(imageURL: "images/invader#{@type}.jpg"))
 
   elem: ->
-    $("alien-#{@id}")
+    $("#alien-#{@id}")
+
+  moveHoriz: (deltax) ->
+    @posx += deltax
+    @updatePos()
+
+  updatePos: ->
+    @elem().x(@posx).y(@posy)
 
 aliens = []
 class AlienManager
@@ -92,8 +99,17 @@ shipShotCallback = ->
     shipShot = shipShot.updatePos()
 
 aliensDelta = 5
+alienSteps = 0
 alienCallback = ->
+  for alien in aliens
+    alien.moveHoriz(aliensDelta)
 
+  alienSteps += 1
+  if alienSteps >= 30
+    alienSteps = 0
+    aliensDelta = -aliensDelta
+
+  null
 
 $ ->
   $("#startbutton").click ->
@@ -110,5 +126,5 @@ $ ->
 
   $.playground().registerCallback shipCallback, 15
   $.playground().registerCallback shipShotCallback, 10
-  $.playground().registerCallback alienCallback, 30
+  $.playground().registerCallback alienCallback, 150
 
