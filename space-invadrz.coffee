@@ -91,7 +91,7 @@ class Alien
 
   collidesWith: (rect) ->
     @posy <= rect.bottom && @posy + @height >= rect.top &&
-    @posx <= rect.right  && @posx + @width  <= rect.left
+    @posx <= rect.right  && @posx + @width  >= rect.left
 
   destroy: ->
     @elem().remove()
@@ -107,8 +107,7 @@ class AlienManager
 
   destroy: (a) ->
     a.destroy()
-    i = aliens.indexOf(a)
-    aliens.splice(i, 1)
+    aliens.splice(aliens.indexOf(a), 1)
 
 am = new AlienManager
 
