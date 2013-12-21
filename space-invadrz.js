@@ -180,7 +180,10 @@ AlienManager = (function() {
   };
 
   AlienManager.prototype.destroy = function(a) {
-    return a.destroy();
+    var i;
+    a.destroy();
+    i = aliens.indexOf(a);
+    return aliens.splice(i, 1);
   };
 
   return AlienManager;

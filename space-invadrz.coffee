@@ -107,6 +107,8 @@ class AlienManager
 
   destroy: (a) ->
     a.destroy()
+    i = aliens.indexOf(a)
+    aliens.splice(i, 1)
 
 am = new AlienManager
 
