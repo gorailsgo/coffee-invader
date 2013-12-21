@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>SPACE::INVADRZ</title>
+    <link href='http://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.js"></script>
     <script type="text/javascript" src="http://cdn.gamequeryjs.com/jquery.gamequery.js"></script>
     <script type="text/javascript" src="space-invadrz.js"></script>
@@ -14,16 +15,16 @@
     </style>
   </head>
   <body>
-  <div id="playground" style="width: 800px; height: 600px; background: black; border: 1px dotted green">
+  <div id="playground" style="width: 800px; height: 600px; background: black; border: 1px dotted green; font-family: 'Press Start 2P'">
     <!--<div id="board" style="position: absolute; overflow: hidden; top: 20px; left: 20px; width: 360px; height: 480px; background: red;">-->
-    <div id="welcomeScreen" style="background: url(./startscreen.jpg); width: 800px; height: 600px; position: absolute; z-index: 100;">
+    <div id="welcomeScreen" style="background: url(./startscreen.jpg); width: 800px; height: 600px; position: absolute; z-index: 100">
       <div style="position: absolute; top: 320px; width: 800px; color: lightgreen;">
-        <center><a style="cursor: pointer;font-size: 80px" id="startbutton">Click here to start!</a></center>
+        <center><a style="cursor: pointer;font-size: 40px" id="startbutton">Click here to start!</a></center>
       </div>
     </div>
     <div id="game-over-screen" style="background: url(./startscreen.jpg); width: 800px; height: 600px; position: absolute; z-index: 100; display: none">
       <div style="position: absolute; top: 320px; width: 800px; color: lightgreen;">
-        <center><a style="cursor: pointer;font-size: 80px" onclick='window.location.reload()'>Game over! Restart!</a></center>
+        <center><a style="cursor: pointer;font-size: 40px" onclick='window.location.reload()'>Game over! Restart!</a></center>
       </div>
     </div>
   </div>
