@@ -73,14 +73,23 @@ class Alien
     @posx += deltax
     @updatePos()
 
+  moveVert: (deltay) ->
+    @posy += deltay
+    @updatePos()
+
   updatePos: ->
     @elem().x(@posx).y(@posy)
 
 aliens = []
 class AlienManager
+  type: 0
+
   generujRzadekAlienow: (num) ->
+    @type += 1
     for x in [0..9]
-      aliens.push new Alien(20 + x * 60, 20 + num * 40, num % 3)
+      aliens.push new Alien(20 + x * 60, 20 + num * 40, @type % 3)
+
+am = new AlienManager
 
 ship = new Ship
 shipShot = null
@@ -100,6 +109,7 @@ shipShotCallback = ->
 
 aliensDelta = 5
 alienSteps = 0
+alienStepsDown = 0
 alienCallback = ->
   for alien in aliens
     alien.moveHoriz(aliensDelta)
@@ -108,6 +118,13 @@ alienCallback = ->
   if alienSteps >= 30
     alienSteps = 0
     aliensDelta = -aliensDelta
+    for alien in aliens
+      alien.moveVert(10)
+
+    alienStepsDown += 1
+    if alienStepsDown > 3
+      alienStepsDown = 0
+      am.generujRzadekAlienow(0)
 
   null
 
@@ -119,10 +136,9 @@ $ ->
   $('#playground').playground(height: 600, width: WIDTH, keyTracker: true)
   $.playground().addSprite('ship', ship.spriteData())
 
-  am = new AlienManager
-  am.generujRzadekAlienow(0)
-  am.generujRzadekAlienow(1)
   am.generujRzadekAlienow(2)
+  am.generujRzadekAlienow(1)
+  am.generujRzadekAlienow(0)
 
   $.playground().registerCallback shipCallback, 15
   $.playground().registerCallback shipShotCallback, 10
