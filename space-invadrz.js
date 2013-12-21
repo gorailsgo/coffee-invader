@@ -176,10 +176,12 @@ Alien = (function() {
   Alien.prototype.height = 30;
 
   function Alien(posx, posy, type) {
+    var rate;
     this.posx = posx;
     this.posy = posy;
     this.type = type;
     this.id = (alienId += 1);
+    rate = 100 + 200 * Math.random();
     $.playground().addSprite("alien-" + this.id, {
       posx: this.posx,
       posy: this.posy,
@@ -189,7 +191,7 @@ Alien = (function() {
         imageURL: "images/invader" + this.type + ".jpg",
         numberOfFrame: 4,
         delta: 30,
-        rate: 200,
+        rate: rate,
         type: $.gameQuery.ANIMATION_VERTICAL
       })
     });
@@ -218,7 +220,9 @@ Alien = (function() {
   };
 
   Alien.prototype.destroy = function() {
-    return this.elem().remove();
+    return this.elem().fadeOut(500, function() {
+      return this.elem().remove();
+    });
   };
 
   Alien.prototype.fire = function() {

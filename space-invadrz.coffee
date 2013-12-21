@@ -105,12 +105,13 @@ class Alien
 
   constructor: (@posx, @posy, @type) ->
     @id = (alienId += 1)
+    rate = 100 + 200 * Math.random()
     $.playground().addSprite("alien-#{@id}",
       posx: @posx,
       posy: @posy,
       width: @width,
       height: @height,
-      animation: new $.gQ.Animation(imageURL: "images/invader#{@type}.jpg", numberOfFrame: 4, delta: 30, rate: 200, type: $.gameQuery.ANIMATION_VERTICAL))
+      animation: new $.gQ.Animation(imageURL: "images/invader#{@type}.jpg", numberOfFrame: 4, delta: 30, rate: rate, type: $.gameQuery.ANIMATION_VERTICAL))
 
   elem: ->
     $("#alien-#{@id}")
@@ -131,7 +132,11 @@ class Alien
     @posx <= rect.right  && @posx + @width  >= rect.left
 
   destroy: ->
-    @elem().remove()
+    @elem().fadeOut 500, ->
+      @elem().remove()
+    # @elem().toggle 'explode'
+    #, 1000, ->
+    #  @remove()
 
   fire: ->
     new AlienShot(@posx + @width / 2, @posy + @height)
