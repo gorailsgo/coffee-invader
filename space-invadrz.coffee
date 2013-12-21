@@ -73,7 +73,7 @@ class Alien
       posy: @posy,
       width: @width,
       height: @height,
-      animation: new $.gQ.Animation(imageURL: "images/invader#{@type}.jpg"))
+      animation: new $.gQ.Animation(imageURL: "images/invader#{@type}.jpg", numberOfFrame: 4, delta: 30, rate: 200, type: $.gameQuery.ANIMATION_VERTICAL))
 
   elem: ->
     $("#alien-#{@id}")
