@@ -1,5 +1,6 @@
 WIDTH = 800
-SHIP_POSY = 540
+HEIGHT = 600
+SHIP_POSY = HEIGHT - 60
 
 class ShipShot
   width: 2
@@ -32,11 +33,43 @@ class ShipShot
   rect: ->
     {top: @posy, left: @posx, bottom: @posy + @height, right: @posx + @width}
 
+class AlienShot
+  width: 2
+  height: 20
+
+  elem: ->
+    $('#alien-shot')
+
+  constructor: (@posx, @posy) ->
+    $.playground().addSprite('alien-shot',
+      posx: @posx,
+      posy: @posy,
+      width: @width,
+      height: @height,
+      animation: new $.gQ.Animation(imageURL: "images/ship-shot.jpg"))
+
+  updatePos: ->
+    if @posy < HEIGHT
+      @posy += 10
+      @elem().y(@posy)
+      @
+    else
+      @destroy()
+
+  destroy: ->
+    @elem().remove()
+    null
+
+  rect: ->
+    {top: @posy, left: @posx, bottom: @posy + @height, right: @posx + @width}
+
+
 class Ship
   constructor: (args) ->
 
   posx: 0
   width: 63
+  height: 40
 
   elem: ->
     $('#ship')
@@ -45,7 +78,7 @@ class Ship
     new $.gQ.Animation(imageURL: "images/space-invaders-ship1.jpg")
 
   spriteData: ->
-    posx: @posx, posy: SHIP_POSY, height: 40, width: @width, animation: @animation()
+    posx: @posx, posy: SHIP_POSY, height: @height, width: @width, animation: @animation()
 
   moveRight: ->
     @posx += 5 if @posx < WIDTH
@@ -60,6 +93,10 @@ class Ship
 
   fire: ->
     new ShipShot(@posx + @width / 2)
+
+  collidesWith: (rect) ->
+    SHIP_POSY <= rect.bottom && SHIP_POSY + @height >= rect.top &&
+    @posx <= rect.right  && @posx + @width  >= rect.left
 
 alienId = 0
 class Alien
@@ -96,6 +133,9 @@ class Alien
   destroy: ->
     @elem().remove()
 
+  fire: ->
+    new AlienShot(@posx + @width / 2, @posy + @height)
+
 aliens = []
 class AlienManager
   type: 0
@@ -123,24 +163,34 @@ shipCallback = ->
     unless shipShot
       shipShot = ship.fire()
 
-shipShotCallback = ->
+alienShot = null
+shotCallback = ->
   if shipShot
     shipShot = shipShot.updatePos()
     for alien in aliens
       if alien.collidesWith(shipShot.rect())
         am.destroy(alien)
         shipShot = shipShot.destroy()
+        break
+  if alienShot
+    alienShot = alienShot.updatePos()
+    if alienShot && ship.collidesWith(alienShot.rect())
+      gameOver()
 
 gameOver = ->
   $.playground().pauseGame()
-  $('#game-over-screen').fadeIn()
+  $('#game-over-screen').fadeIn(2000)
 
 aliensDelta = 5
 alienSteps = 0
 alienStepsDown = 0
+aliensFireRate = 0.01
+alienCallbackRate = 150
 alienCallback = ->
   for alien in aliens
     alien.moveHoriz(aliensDelta)
+    if !alienShot && Math.random() < aliensFireRate
+      alienShot = alien.fire()
 
   alienSteps += 1
   if alienSteps >= 30
@@ -148,7 +198,7 @@ alienCallback = ->
     aliensDelta = -aliensDelta
     for alien in aliens
       alien.moveVert(10)
-      if alien.posy >= 200
+      if alien.posy >= SHIP_POSY
         gameOver()
 
     alienStepsDown += 1
@@ -156,22 +206,25 @@ alienCallback = ->
       alienStepsDown = 0
       aliensDelta += 1
       am.generujRzadekAlienow(0)
-
-  null
+      aliensFireRate *= 1.1
+      alienCallbackRate -= 10 # returned!
 
 $ ->
   $("#startbutton").click ->
     $.playground().startGame ->
       $("#welcomeScreen").remove()
 
-  $('#playground').playground(height: 600, width: WIDTH, keyTracker: true)
+  $('#playground').playground(height: HEIGHT, width: WIDTH, keyTracker: true)
   $.playground().addSprite('ship', ship.spriteData())
 
+  am.generujRzadekAlienow(5)
+  am.generujRzadekAlienow(4)
+  am.generujRzadekAlienow(3)
   am.generujRzadekAlienow(2)
   am.generujRzadekAlienow(1)
   am.generujRzadekAlienow(0)
 
   $.playground().registerCallback shipCallback, 15
-  $.playground().registerCallback shipShotCallback, 10
-  $.playground().registerCallback alienCallback, 150
+  $.playground().registerCallback shotCallback, 10
+  $.playground().registerCallback alienCallback, alienCallbackRate
 
